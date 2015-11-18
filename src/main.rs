@@ -1,16 +1,22 @@
 extern crate getopts;
-
-mod yes;
 use std::env;
 use std::path::Path;
 use std::process::exit;
+use std::collections::HashMap;
+
+mod yes;
 
 fn main(){
     let args: Vec<String> = env::args().collect();
     exit(dispatch(args));
 }
 
+
 fn dispatch(mut args: Vec<String>) -> i32 {
+    // program list
+    let mut dispatch_table = HashMap::new();
+    dispatch_table.insert("yes", yes::mmain);
+
     if args.len() == 0 {
         print_usage();
         return 255;
@@ -27,12 +33,15 @@ fn dispatch(mut args: Vec<String>) -> i32 {
         _ => panic!("Shouldn't happen!"),
     };
 
-    match AsRef::<str>::as_ref(command){
-        "busybox" => {args.remove(0); dispatch(args)},
-        "yes" => {yes::mmain(&args)},
-        a => {println!("called with {}", a); 0}
+    if command == "busybox" {
+        args.remove(0);
+        return dispatch(args);
     }
 
+    match dispatch_table.get(command){
+        Some(f) => f(&args),
+        None => {print_usage(); exit(255);}
+    }
 }
 
 fn print_usage(){
