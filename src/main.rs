@@ -35,6 +35,7 @@ fn dispatch(mut args: Vec<String>) -> i32 {
 
     if command == "busybox" {
         args.remove(0);
+
         return dispatch(args);
     }
 
@@ -45,5 +46,10 @@ fn dispatch(mut args: Vec<String>) -> i32 {
 }
 
 fn print_usage(){
-    println!("busybox yes");
+    println!("busybox command");
+    println!("or");
+    println!("command");
+    println!("");
+    println!("Available commands:");
+    println!("yes");
 }
