@@ -17,8 +17,9 @@ fn dispatch(mut args: Vec<String>) -> i32 {
     let mut dispatch_table = HashMap::new();
     dispatch_table.insert("yes", yes::mmain);
 
+    let program_list: Vec<_> = dispatch_table.keys().collect();
     if args.len() == 0 {
-        print_usage();
+        print_usage(program_list);
         return 255;
     }
     let path_string =args[0].to_string();
@@ -41,15 +42,18 @@ fn dispatch(mut args: Vec<String>) -> i32 {
 
     match dispatch_table.get(command){
         Some(f) => f(&args),
-        None => {print_usage(); exit(255);}
+        None => {print_usage(program_list); exit(255);}
     }
 }
 
-fn print_usage(){
+fn print_usage(program_list : Vec<&&str>){
     println!("busybox command");
     println!("or");
-    println!("command");
+    println!("ln busybox command");
+    println!("./command");
     println!("");
     println!("Available commands:");
-    println!("yes");
+    for key in program_list {
+        println!("{}",key);
+    }
 }
