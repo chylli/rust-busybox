@@ -42,7 +42,7 @@ fn dispatch(mut args: Vec<String>) -> i32 {
         return dispatch(args);
     }
 
-    match dispatch_table.get(command){
+    match dispatch_table.get_mut(command){
         Some(mut f) => f(&args),
         None => {print_usage(program_list); exit(255);}
     }
