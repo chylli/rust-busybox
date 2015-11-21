@@ -9,7 +9,7 @@ static VERSION: &'static str = "0.0.1";
 #[macro_use]
 mod utils;
 
-pub fn mmain(args: &Vec<String>){
+pub fn mmain(args: &Vec<String>) -> i32 {
     let mut opts = Options::new();
 
     opts.optflag("h","help", "display this help and exit");
@@ -22,12 +22,12 @@ pub fn mmain(args: &Vec<String>){
 
     if matches.opt_present("version"){
         println!("{} {}", NAME, VERSION);
-        exit(0);
+        return 0;
     }
 
     if matches.opt_present("help"){
         print_usage(opts);
-        exit(0);
+        return 0;
     }
 
     let string = if matches.free.is_empty(){
@@ -39,7 +39,7 @@ pub fn mmain(args: &Vec<String>){
 
     exec(&string[..]);
 
-    exit(0);
+    return 0;
 }
 
 fn exec(string: &str) {
