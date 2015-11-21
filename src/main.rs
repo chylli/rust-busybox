@@ -19,10 +19,11 @@ fn dispatch(mut args: Vec<String>) -> i32 {
     dispatch_table.insert("yes", Box::new(yes::mmain));
     dispatch_table.insert("echo", Box::new(echo::mmain));
 
-    let mut program_list: Vec<String> = vec![];
-    for key in dispatch_table.keys(){
-        program_list.push(key.to_string());
-    }
+    //to_string() 调用的是 std::fmt::Display
+    //clone() 用的是 std::clone::Clone
+    //to_owned() 用的是 std::convert::ToOwned
+    //到底有何区别
+    let program_list: Vec<String> = dispatch_table.keys().map(|s| (*s).to_owned()).collect();
 
     if args.len() == 0 {
         print_usage(program_list);
