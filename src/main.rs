@@ -19,7 +19,11 @@ fn dispatch(mut args: Vec<String>) -> i32 {
     dispatch_table.insert("yes", Box::new(yes::mmain));
     dispatch_table.insert("echo", Box::new(echo::mmain));
 
-    let program_list: Vec<_> = dispatch_table.keys().collect();
+    let mut program_list: Vec<String> = vec![];
+    for key in dispatch_table.keys(){
+        program_list.push(key.to_string());
+    }
+
     if args.len() == 0 {
         print_usage(program_list);
         return 255;
@@ -48,7 +52,7 @@ fn dispatch(mut args: Vec<String>) -> i32 {
     }
 }
 
-fn print_usage(program_list : Vec<&&str>){
+fn print_usage(program_list : Vec<String>){
     println!("busybox command");
     println!("or");
     println!("ln busybox command");
