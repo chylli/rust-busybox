@@ -5,6 +5,7 @@ use std::process::exit;
 use std::collections::HashMap;
 
 mod yes;
+mod echo;
 
 fn main(){
     let args: Vec<String> = env::args().collect();
@@ -16,6 +17,7 @@ fn dispatch(mut args: Vec<String>) -> i32 {
     // program list
     let mut dispatch_table = HashMap::new();
     dispatch_table.insert("yes", yes::mmain);
+    dispatch_table.insert("echo", echo::mmain);
 
     let program_list: Vec<_> = dispatch_table.keys().collect();
     if args.len() == 0 {
