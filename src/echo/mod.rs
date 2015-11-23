@@ -42,13 +42,56 @@ pub fn mmain(args: &Vec<String>) -> i32 {
         "".to_string()
     };
 
-    print!("{}", input);
+
+    let output = if matches.opt_present("e"){
+        escape(input)
+    }
+    else{
+        input
+    };
+
+    print!("{}", output);
 
     if !matches.opt_present("n"){
         println!("");
     };
 
     0
+}
+
+fn escape(input: String) -> String {
+    let mut prev_was_slash = false;
+    let mut iter = input.chars().enumerate();
+    let mut output = "".to_string();
+    while let Some((index, c)) = iter.next() {
+        if !prev_was_slash {
+            if c != '\\' {
+                output = output + &(c.to_string());
+            }
+            else {
+                prev_was_slash = true;
+            }
+        }
+        else {
+            prev_was_slash = false;
+            let new_str =
+                match c {
+                    '\\' => "\\",
+                    'a'  => "\0x07",
+                    'b' => "\x08",
+                    'c' => break,
+                    'e' => "\x1B",
+                    'f' => "\x0C",
+                    'n' => "\n",
+                    'r' => "\r",
+                    't' => "\t",
+                    'v' => "\x0B",
+                    _ => "",
+                };
+            output = output + new_str
+        }
+    }
+    output
 }
 
 fn print_version(){
