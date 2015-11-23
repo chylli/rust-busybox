@@ -1,45 +1,80 @@
-//extern crate getopts;
-//extern create libc;
-//
-//use std::io::Write;
-//use std::str::from_utf8;
-//#[path = "./util/modrs"]
-//#[macro_use]
-//mod util;
-//
-//#[allow(dead_code)]
-//static NAME: &'static str = "echo";
-//static VERSION: &'static str = "0.0.1";
-//
-//#[inline(always)]
-//struct EchoOPtions {
-//    newline: bool,
-//    escape: bool
-//}
-//
-//#[inline(always)]
-//fn to_char(bytes: &Vec<u8>, base: u32) -> char {
-//    usize::from_str_radix(from_utf8(bytes.as_ref()).unwrap(), base).unwrap() as u8 as char
-//}
-//
-//#[inline(always)]
-//fn isxdigit(c: u8) -> bool {
-//    match c as char {
-//        '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' |
-//        '8' | '9' | 'A' | 'B' | 'C' | 'D' | 'E' | 'F' => true,
-//        _ => false
-//    }
-//}
-//
-//#[inline(always)]
-//fn isodigit(c: u8) -> bool {
-//    match c as char {
-//        '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' => true,
-//        _ => false
-//    }
-//}
+extern crate getopts;
+use std::process::exit;
+use getopts::Options;
+use std::io::Write;
+
+#[path = "../utils/mod.rs"]
+#[macro_use]
+mod utils;
+
+#[allow(dead_code)]
+static NAME: &'static str = "echo";
+static VERSION: &'static str = "1.0.0";
 
 pub fn mmain(args: &Vec<String>) -> i32 {
+    let mut opts = Options::new();
+
+    opts.optflag("n", "", "do not output the trailing newline");
+    opts.optflag("e", "", "enable interpretation of backslash escapes");
+    opts.optflag("E", "", "disable interpretation of backslash escapes (default)");
+    opts.optflag("h", "help", "display this help and exit");
+    opts.optflag("V", "version", "output version information and exit");
+
+    let matches = match opts.parse(&args[1..]){
+        Ok(m) => m,
+        Err(f) => crash!("invalid options\n{}",f)
+    };
+
+    if matches.opt_present("help"){
+        print_usage(opts);
+        return 0;
+    }
+
+    if matches.opt_present("version"){
+        print_version();
+        return 0;
+    }
+
+    let input = if !matches.free.is_empty(){
+        matches.free.join(" ")
+    }
+    else{
+        "".to_string()
+    };
+
+    println!("{}", input);
+
     println!("echo is called");
     0
 }
+
+fn print_version(){
+    println!("{} {}", NAME, VERSION);
+}
+
+fn print_usage(opts: Options){
+    let msg = format!("{0} {1} - display a line of text
+
+Usage:
+  {0} [SHORT-OPTION]... [STRING]...
+  {0} LONG-OPTION
+
+Echo the STRING(s) to standard output.
+If -e is in effect, the following sequences are recognized:
+
+\\\\      backslash
+\\a      alert (BEL)
+\\b      backspace
+\\c      produce no further output
+\\e      escape
+\\f      form feed
+\\n      new line
+\\r      carriage return
+\\t      horizontal tab
+\\v      vertical tab
+\\0NNN   byte with octal value NNN (1 to 3 digits)
+\\xHH    byte with hexadecimal value HH (1 to 2 digits)", NAME, VERSION);
+
+    print!("{}", opts.usage(&msg));
+}
+
