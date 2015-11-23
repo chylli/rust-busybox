@@ -74,7 +74,7 @@ fn escape(input: String) -> String {
         }
         else {
             prev_was_slash = false;
-            let new_str =
+            let new_str : &str =
                 match c {
                     '\\' => "\\",
                     'a'  => "\0x07",
@@ -86,7 +86,7 @@ fn escape(input: String) -> String {
                     'r' => "\r",
                     't' => "\t",
                     'v' => "\x0B",
-                    _ => "",
+                    ch  => &("\\".to_string() + &(ch.to_string())),
                 };
             output = output + new_str
         }
