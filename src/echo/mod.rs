@@ -42,9 +42,12 @@ pub fn mmain(args: &Vec<String>) -> i32 {
         "".to_string()
     };
 
-    println!("{}", input);
+    print!("{}", input);
 
-    println!("echo is called");
+    if !matches.opt_present("n"){
+        println!("");
+    };
+
     0
 }
 
