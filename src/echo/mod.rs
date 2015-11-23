@@ -66,7 +66,7 @@ fn escape(input: String) -> String {
     while let Some((index, c)) = iter.next() {
         if !prev_was_slash {
             if c != '\\' {
-                output = output + &(c.to_string());
+                output.push(c);
             }
             else {
                 prev_was_slash = true;
@@ -74,21 +74,20 @@ fn escape(input: String) -> String {
         }
         else {
             prev_was_slash = false;
-            let new_str : &str =
-                match c {
-                    '\\' => "\\",
-                    'a'  => "\0x07",
-                    'b' => "\x08",
-                    'c' => break,
-                    'e' => "\x1B",
-                    'f' => "\x0C",
-                    'n' => "\n",
-                    'r' => "\r",
-                    't' => "\t",
-                    'v' => "\x0B",
-                    ch  => &("\\".to_string() + &(ch.to_string())),
-                };
-            output = output + new_str
+            match c {
+                '\\' => output.push_str("\\"),
+                'a'  => output.push_str("\0x07"),
+                'b' => output.push_str("\x08"),
+                'c' => break,
+                'e' => output.push_str("\x1B"),
+                'f' => output.push_str("\x0C"),
+                'n' => output.push_str("\n"),
+                'r' => output.push_str("\r"),
+                't' => output.push_str("\t"),
+                'v' => output.push_str("\x0B"),
+                //'x' => output.push_str(&(parse_hex(&)))
+                ch  => {output.push_str("\\"); output.push(ch)},
+            };
         }
     }
     output
