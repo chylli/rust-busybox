@@ -85,12 +85,19 @@ fn escape(input: String) -> String {
                 'r' => output.push_str("\r"),
                 't' => output.push_str("\t"),
                 'v' => output.push_str("\x0B"),
-                //'x' => output.push_str(&(parse_hex(&)))
+                'x' => output.push_str(&(parse_hex(&iter))),
                 ch  => {output.push_str("\\"); output.push(ch)},
             };
         }
     }
     output
+}
+
+fn parse_hex(iter: &mut i32){
+    match iter.next() {
+        Some(c) => c.to_string,
+        None => "".to_string,
+    }
 }
 
 fn print_version(){
