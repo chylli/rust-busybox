@@ -98,6 +98,18 @@ fn escape(input: String) -> String {
                         }
                     }
                 },
+                '0' => {
+                    let (c, num_char_used ) = convert_str(input.as_bytes(), index + 1, 8);
+                    if num_char_used == 0 {
+                        output.push_str("\\0");
+                    }
+                    else{
+                        output.push(c);
+                        for _ in 0 .. num_char_used {
+                            iter.next();
+                        }
+                    }
+                }
                 ch  => {output.push_str("\\"); output.push(ch)},
             };
         }
