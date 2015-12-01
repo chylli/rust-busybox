@@ -3,6 +3,7 @@ use std::process::exit;
 use getopts::Options;
 use std::io::Write;
 
+
 #[path = "../utils/mod.rs"]
 #[macro_use]
 mod utils;
@@ -85,7 +86,18 @@ fn escape(input: String) -> String {
                 'r' => output.push_str("\r"),
                 't' => output.push_str("\t"),
                 'v' => output.push_str("\x0B"),
-                'x' => output.push_str(&(parse_hex(&iter))),
+                'x' => {
+                    let (c, num_char_used ) = convert_str(input.as_bytes(), index + 1, 16);
+                    if num_char_used == 0 {
+                        output.push_str("\\x");
+                    }
+                    else{
+                        output.push(c);
+                        for _ in 0 .. num_char_used {
+                            iter.next();
+                        }
+                    }
+                },
                 ch  => {output.push_str("\\"); output.push(ch)},
             };
         }
@@ -93,11 +105,52 @@ fn escape(input: String) -> String {
     output
 }
 
-fn parse_hex(iter: &mut i32){
-    match iter.next() {
-        Some(c) => c.to_string,
-        None => "".to_string,
+fn isodigit(c : char) -> bool{
+    match c {
+        '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' => true,
+        _ => false,
     }
+}
+
+fn ishdigit(c: char) -> bool{
+    match c {
+        '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' |
+        '8' | '9' | 'A' | 'B' | 'C' | 'D' | 'E' | 'F' => true,
+        _ => false
+    }
+}
+
+fn convert_str(string: &[u8], index: usize, base: u32) -> (char, usize) {
+    let (max_digits, is_legal_digit) : (usize, fn(char) -> bool) = match base {
+        8 => (3, isodigit),
+        16 => (2, ishdigit),
+        _ => panic!(),
+    };
+
+    let mut bytes : String = "".to_string();
+    for offset in 0 .. max_digits {
+        if string.len() <= index + offset {
+            break;
+        }
+        let c = string[index + offset] as char;
+        if is_legal_digit(c) {
+            bytes.push(c);
+        }
+        else {
+            break;
+        }
+    }
+
+    if bytes.len() == 0 {
+        (' ', 0)
+    }
+    else{
+        (to_char(&bytes, base), bytes.len())
+    }
+}
+
+fn to_char(bytes: &str, base: u32) -> char {
+    usize::from_str_radix(bytes,base).unwrap() as u8 as char
 }
 
 fn print_version(){
