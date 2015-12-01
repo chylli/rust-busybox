@@ -86,10 +86,12 @@ fn escape(input: String) -> String {
                 'r' => output.push_str("\r"),
                 't' => output.push_str("\t"),
                 'v' => output.push_str("\x0B"),
-                'x' => {
-                    let (c, num_char_used ) = convert_str(input.as_bytes(), index + 1, 16);
+                'x' | '0' => {
+                    let base = if c == 'x' {16} else {8};
+                    let tmp_str = if c == 'x' {"\\x"} else {"\\0"};
+                    let (c, num_char_used ) = convert_str(input.as_bytes(), index + 1, base);
                     if num_char_used == 0 {
-                        output.push_str("\\x");
+                        output.push_str(tmp_str);
                     }
                     else{
                         output.push(c);
@@ -98,18 +100,6 @@ fn escape(input: String) -> String {
                         }
                     }
                 },
-                '0' => {
-                    let (c, num_char_used ) = convert_str(input.as_bytes(), index + 1, 8);
-                    if num_char_used == 0 {
-                        output.push_str("\\0");
-                    }
-                    else{
-                        output.push(c);
-                        for _ in 0 .. num_char_used {
-                            iter.next();
-                        }
-                    }
-                }
                 ch  => {output.push_str("\\"); output.push(ch)},
             };
         }
