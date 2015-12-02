@@ -4,9 +4,14 @@ use std::str;
 static PROGRAM: &'static str = "target/debug/busybox";
 static COMMAND: &'static str = "echo";
 
+fn command() -> Command {
+    let mut c = Command::new(PROGRAM);
+    c.arg(COMMAND);
+    c
+}
 #[test]
 fn test_default(){
-    let po = Command::new(PROGRAM).arg(COMMAND)
+    let po = command()
         .output()
         .unwrap_or_else(|err| panic!("{}",err));
 
@@ -16,7 +21,7 @@ fn test_default(){
 
 #[test]
 fn test_no_trailing_newline(){
-    let po = Command::new(PROGRAM).arg(COMMAND)
+    let po = command()
         .arg("-n")
         .arg("hello_world")
         .output()
@@ -28,7 +33,7 @@ fn test_no_trailing_newline(){
 
 #[test]
 fn test_enable_escapes() {
-    let po = Command::new(PROGRAM).arg(COMMAND)
+    let po = command()
         .arg("-e")
         .arg("\\\\\\t\\r")
         .output()
@@ -40,7 +45,7 @@ fn test_enable_escapes() {
 
 #[test]
 fn test_disable_escapes() {
-    let po = Command::new(PROGRAM).arg(COMMAND)
+    let po = command()
         .arg("-E")
         .arg("\\b\\c\\e")
         .output()
@@ -52,7 +57,7 @@ fn test_disable_escapes() {
 
 #[test]
 fn test_escape_hex(){
-    let po = Command::new(PROGRAM).arg(COMMAND)
+    let po = command()
         .arg("-e")
         .arg("\\x70\\0110")
         .output()
