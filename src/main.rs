@@ -7,6 +7,7 @@ use std::collections::HashMap;
 mod yes;
 mod echo;
 mod bfalse;
+mod btrue;
 
 fn main(){
     let args: Vec<String> = env::args().collect();
@@ -20,6 +21,7 @@ fn dispatch(mut args: Vec<String>) -> i32 {
     dispatch_table.insert("yes", Box::new(yes::mmain));
     dispatch_table.insert("echo", Box::new(echo::mmain));
     dispatch_table.insert("false", Box::new(bfalse::mmain));
+    dispatch_table.insert("false", Box::new(btrue::mmain));
 
     //to_string() 调用的是 std::fmt::Display
     //clone() 用的是 std::clone::Clone
